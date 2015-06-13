@@ -23,22 +23,24 @@ namespace CocosConsoleFE
         private void initProjects()
         {
             //Get projects folder
-#if RELEASE
             if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 if (Directory.Exists(folderBrowserDialog.SelectedPath))
                     txtProjectsFolder.Text = folderBrowserDialog.SelectedPath;
             }
-#endif
 
             //Put all subfolders inside cmbProjects
             cmbProjects.Items.Add("-- SELECT --");
             cmbProjects.SelectedIndex = 0;
-            foreach (string path in Directory.EnumerateDirectories(txtProjectsFolder.Text))
+
+            if (!string.IsNullOrEmpty(txtProjectsFolder.Text))
             {
-                if (Directory.Exists(path))
+                foreach (string path in Directory.EnumerateDirectories(txtProjectsFolder.Text))
                 {
-                    cmbProjects.Items.Add(path);
+                    if (Directory.Exists(path))
+                    {
+                        cmbProjects.Items.Add(path);
+                    }
                 }
             }
         }
@@ -200,24 +202,8 @@ namespace CocosConsoleFE
             cmbPlatform.SelectedIndex = 0;
             cmbMode.SelectedIndex = 0;
 
-#if RELEASE
-            if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("COCOS_CONSOLE_ROOT"))
+            if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("COCOS_CONSOLE_ROOT")))
                 MessageBox.Show("You must rum setup.py to set environment variables first", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-#endif
-
-#if DEBUG
-            txtPackageName.Text = "com.innen.bomberbunny";
-            txtProjectName.Text = "BomberBunny";
-            txtProjectsFolder.Text = @"D:\_Projetos\Games";
-            cmbCommand.SelectedIndex = 3;
-            cmbLanguage.SelectedIndex = 1;
-            cmbPlatform.SelectedIndex = 2;
-            cmbMode.SelectedIndex = 1;
-
-            initProjects();
-
-            cmbProjects.SelectedIndex = 1;
-#endif
         }
 
         private void cmbCommand_SelectedIndexChanged(object sender, EventArgs e)
